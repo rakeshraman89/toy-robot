@@ -13,18 +13,20 @@ namespace Toy.Robot.UnitTest
     public class ToyOperationsUnitTest
     {
         private ILogger<ToyOperations> _logger;
+        private IRobotCommands _robotCommands;
         [SetUp]
         public void Setup()
         {
             _logger = Mock.Of<ILogger<ToyOperations>>();
+            _robotCommands = Mock.Of<RobotCommands>();
         }
 
         [Test]
         public void TestToyOperations()
         {
-            var subject = new ToyOperations(_logger);
+            var subject = new ToyOperations(_logger, _robotCommands);
             var commands = File.ReadAllLines("C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
-            subject.PerformOperations(commands);
+            subject.ProcessOperations(commands);
         }
     }
 }

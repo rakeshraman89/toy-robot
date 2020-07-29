@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Toy.Robot.Common.Interfaces;
+using Toy.Robot.Operations;
 
 namespace Toy.Robot.ConsoleApp
 {
@@ -14,6 +15,8 @@ namespace Toy.Robot.ConsoleApp
             var builder = new HostBuilder()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddTransient<IToyOperations, ToyOperations>();
+                    services.AddTransient<IRobotCommands, RobotCommands>();
                 }).UseConsoleLifetime();
 
             var host = builder.Build();
@@ -26,17 +29,18 @@ namespace Toy.Robot.ConsoleApp
             Console.WriteLine("\nHi this is Chitti-The robot!");
             Console.WriteLine("\nEnter the file name:");
             var fileName = Console.ReadLine();
-            var commands = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\{fileName}.txt");
-            if (commands == null || commands.Length == 0)
+            var operations = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
+            if (operations == null || operations.Length == 0)
             {
                 Console.WriteLine("File Name was not specified");
             }
-            ReadOperations(commands);
+            ReadOperations(operations);
+            Console.ReadLine();
         }
 
-        private static void ReadOperations(string[] commands)
+        private static void ReadOperations(string[] operations)
         {
-            _toyOperations.PerformOperations(commands);
+            _toyOperations.ProcessOperations(operations);
         }
     }
 }

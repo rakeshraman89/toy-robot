@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Toy.Robot.Common\Toy.Robot.Common.csproj" />
+    <ProjectReference Include="..\Toy.Robot.Operations\Toy.Robot.Operations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

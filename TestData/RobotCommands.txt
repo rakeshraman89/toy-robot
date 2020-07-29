@@ -1,5 +1,2 @@
-This
-is
-robot
-command
-files.
+PLACE 0,0,North
+PLACE 1,1,East

@@ -6,9 +6,9 @@ namespace Toy.Robot.Common.Interfaces
 {
     public interface IToyOperations
     {
-        void PerformOperations(string[] commands);
-        void Place();
-        void Move();
+        void ProcessOperations(string[] operations);
+        void Place(string command);
+        void Move(string command);
         void TurnLeft();
         void TurnRight();
     }
