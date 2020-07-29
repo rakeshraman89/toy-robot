@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Toy.Robot.Common;
 using Toy.Robot.Common.Interfaces;
+using Toy.Robot.Common.Utils;
 
 namespace Toy.Robot.Operations
 {
@@ -13,10 +14,7 @@ namespace Toy.Robot.Operations
         private IRobotCommands _robotCommands;
         public readonly Common.Robot Robot;
         private bool _isToyPlaced;
-        private const string PLACE = "PLACE";
-        private const string MOVE = "MOVE";
-        private const string LEFT = "LEFT";
-        private const string RIGHT = "RIGHT";
+
         public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands)
         {
             _logger = logger;
@@ -31,22 +29,26 @@ namespace Toy.Robot.Operations
             _logger.LogDebug("Performing robot operations!!");
             foreach (var operation in commands)
             {
-                if (Regex.IsMatch(operation, $"^{PLACE}\\s"))
+                if (Regex.IsMatch(operation.ToLower(), $"^{Commands.PLACE.ToString().ToLower()}\\s"))
                 {
                     Place(operation);
                 }
                 if (!_isToyPlaced) continue;
-                if(Regex.IsMatch(operation, $"^{MOVE}$"))
+                if(Regex.IsMatch(operation.ToLower(), $"^{Commands.MOVE.ToString().ToLower()}$"))
                 {
                     Move(operation);
                 }
-                else if (Regex.IsMatch(operation, $"^{LEFT}$"))
+                else if (Regex.IsMatch(operation.ToLower(), $"^{Commands.LEFT.ToString().ToLower()}$"))
                 {
                     TurnLeft();
                 }
-                else if (Regex.IsMatch(operation, $"^{RIGHT}$"))
+                else if (Regex.IsMatch(operation.ToLower(), $"^{Commands.RIGHT.ToString().ToLower()}$"))
                 {
                     TurnRight();
+                }
+                else if (Regex.IsMatch(operation.ToLower(), $"^{Commands.REPORT.ToString().ToLower()}$"))
+                {
+                    Report();
                 }
                 else
                 {
@@ -64,7 +66,7 @@ namespace Toy.Robot.Operations
             var direction = operationParameters[3];
             Robot.Coordinate.X = x;
             Robot.Coordinate.Y = y;
-            Robot.Direction = direction;
+            Robot.Direction = Enum.Parse<FacingDirection>(direction, true);
         }
 
         public void Place(string operation)
