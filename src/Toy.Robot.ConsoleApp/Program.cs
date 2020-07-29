@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
 using Toy.Robot.Operations;
 
@@ -46,7 +47,20 @@ namespace Toy.Robot.ConsoleApp
 
         private static void ReadOperations(string[] operations)
         {
-            _toyOperations.ProcessOperations(operations);
+            try
+            {
+                _toyOperations.ProcessOperations(operations);
+            }
+            catch (CommandException ce)
+            {
+                Console.WriteLine(ce.Message);
+                Console.WriteLine(@" The commands should be in the following form
+                    PLACE X,Y,FACING
+                    MOVE
+                    LEFT
+                    RIGHT
+                    REPORT");
+            }
         }
     }
 }

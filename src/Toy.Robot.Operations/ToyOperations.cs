@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Toy.Robot.Common;
+using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
 using Toy.Robot.Common.Utils;
 
@@ -12,8 +13,10 @@ namespace Toy.Robot.Operations
     {
         private readonly ILogger<ToyOperations> _logger;
         private IRobotCommands _robotCommands;
-        public readonly Common.Robot Robot;
-        private bool _isToyPlaced;
+        public Common.Robot Robot;
+        public bool IsToyPlaced;
+        private string _currentReport = string.Empty;
+        private TableTop _board = new TableTop();
 
         public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands)
         {
@@ -29,12 +32,16 @@ namespace Toy.Robot.Operations
             _logger.LogDebug("Performing robot operations!!");
             foreach (var operation in commands)
             {
+                if (Regex.IsMatch(operation.ToLower(), $"^{Commands.PLACE.ToString().ToLower()}"))
+                {
+                    Place(operation);
+                }
+                if (!IsToyPlaced) continue;
                 if (Regex.IsMatch(operation.ToLower(), $"^{Commands.PLACE.ToString().ToLower()}\\s"))
                 {
                     Place(operation);
                 }
-                if (!_isToyPlaced) continue;
-                if(Regex.IsMatch(operation.ToLower(), $"^{Commands.MOVE.ToString().ToLower()}$"))
+                else if (Regex.IsMatch(operation.ToLower(), $"^{Commands.MOVE.ToString().ToLower()}$"))
                 {
                     Move(operation);
                 }
@@ -52,36 +59,51 @@ namespace Toy.Robot.Operations
                 }
                 else
                 {
-                    _logger.LogError("Incorrect commands in the file");
+                    throw new CommandException($"Error command:{operation}");
                 }
             }
         }
 
-        private void SplitOperationParameters(string operation)
+        private Common.Robot SplitOperationParameters(string operation)
         {
             var operationParameters = operation.Split(' ', ',');
-            if (operationParameters.Length != 4) return;
-            int.TryParse(operationParameters[1], out var x);
-            int.TryParse(operationParameters[2], out var y);
+            if (operationParameters.Length != 4)
+            {
+                throw new CommandException($"Error command:{operation}");
+            }
+            var isValidXCoordinate = int.TryParse(operationParameters[1], out var x);
+            var isValidYCoordinate = int.TryParse(operationParameters[2], out var y);
+            if (!isValidXCoordinate || !isValidYCoordinate)
+            {
+                throw new CommandException($"Error command:{operation}");
+            }
             var direction = operationParameters[3];
-            Robot.Coordinate.X = x;
-            Robot.Coordinate.Y = y;
-            Robot.Direction = Enum.Parse<FacingDirection>(direction, true);
+            var tempRobotPosition = new Common.Robot
+            {
+                Coordinate = new Position
+                {
+                    X = x,
+                    Y = y
+                },
+                Direction = Enum.Parse<FacingDirection>(direction, true)
+            };
+            return tempRobotPosition;
         }
 
         public void Place(string operation)
         {
             _logger.LogDebug($"Place operation:{operation}");
-            SplitOperationParameters(operation);
-            _robotCommands.ExecutePlaceCommand(Robot);
-            _isToyPlaced = true;
+            var robotPosition = SplitOperationParameters(operation);
+            Console.WriteLine("Executing place command");
+            if (!robotPosition.IsPlacementValid(new TableTop())) return;
+            Robot = robotPosition;
+            IsToyPlaced = true;
         }
 
         public void Move(string operation)
         {
             _logger.LogDebug($"Move operation:{operation}");
-            SplitOperationParameters(operation);
-            _robotCommands.ExecuteMoveCommand(Robot);
+            _robotCommands.ExecuteMoveCommand(Robot, _board);
         }
 
         public void TurnLeft()
@@ -99,7 +121,12 @@ namespace Toy.Robot.Operations
         public void Report()
         {
             _logger.LogDebug($"Reporting operation");
-            _robotCommands.ExecuteReportCommand();
+            _currentReport = _robotCommands.ExecuteReportCommand(Robot);
+        }
+
+        public string GetCurrentReport()
+        {
+            return _currentReport;
         }
     }
 }

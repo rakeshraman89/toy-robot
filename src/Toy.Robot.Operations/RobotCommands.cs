@@ -9,45 +9,45 @@ namespace Toy.Robot.Operations
     public class RobotCommands : IRobotCommands
     {
         private ILogger<RobotCommands> _logger;
-        private TableTop _board = new TableTop();
-        private Common.Robot _robot;
         public RobotCommands(ILogger<RobotCommands> logger)
         {
             _logger = logger;
         }
-        public void ExecutePlaceCommand(Common.Robot robot)
-        {
-            Console.WriteLine("Executing place command");
-            if (!robot.IsPlacementValid(_board)) return;
-            _robot = robot;
-        }
 
-        public void ExecuteMoveCommand(Common.Robot robot)
+        public void ExecuteMoveCommand(Common.Robot robot, TableTop board)
         {
             Console.WriteLine("Executing move command");
-            switch (robot.Direction)
+            var tempRobot = new Common.Robot()
+            {
+                Coordinate = new Position
+                {
+                    X = robot.Coordinate.X,
+                    Y = robot.Coordinate.Y
+                },
+                Direction = robot.Direction
+            };
+            switch (tempRobot.Direction)
             {
                 case FacingDirection.North:
-                    robot.Coordinate.Y += 1;
+                    tempRobot.Coordinate.Y += 1;
                     break;
                 case FacingDirection.East:
-                    robot.Coordinate.X += 1;
+                    tempRobot.Coordinate.X += 1;
                     break;
                 case FacingDirection.South:
-                    robot.Coordinate.Y -= 1;
+                    tempRobot.Coordinate.Y -= 1;
                     break;
                 case FacingDirection.West:
-                    robot.Coordinate.X -= 1;
+                    tempRobot.Coordinate.X -= 1;
                     break;
                 default:
                     return;
             }
 
-            if (robot.IsPlacementValid(_board))
-            {
-                _robot = robot;
-            }
-
+            if (!tempRobot.IsPlacementValid(board)) return;
+            robot.Coordinate.X = tempRobot.Coordinate.X;
+            robot.Coordinate.Y = tempRobot.Coordinate.Y;
+            robot.Direction = tempRobot.Direction;
         }
 
         public void ExecuteTurnLeftCommand(Common.Robot robot)
@@ -71,10 +71,6 @@ namespace Toy.Robot.Operations
                     return;
             }
 
-            if (robot.IsPlacementValid(_board))
-            {
-                _robot = robot;
-            }
         }
 
         public void ExecuteTurnRightCommand(Common.Robot robot)
@@ -97,15 +93,13 @@ namespace Toy.Robot.Operations
                 default:
                     return;
             }
-            if (robot.IsPlacementValid(_board))
-            {
-                _robot = robot;
-            }
         }
 
-        public void ExecuteReportCommand()
+        public string ExecuteReportCommand(Common.Robot robot)
         {
-            Console.WriteLine($"{_robot.Coordinate.X},{_robot.Coordinate.Y},{_robot.Direction.ToString()}");
+            var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()}";
+            Console.WriteLine(report);
+            return report;
         }
     }
 }
