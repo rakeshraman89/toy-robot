@@ -21,7 +21,10 @@ namespace Toy.Robot.Operations
         {
             _logger = logger;
             _robotCommands = robotCommands;
-            Robot = new Common.Robot();
+            Robot = new Common.Robot
+            {
+                Coordinate = new Position()
+            };
         }
         public void ProcessOperations(string[] commands)
         {
@@ -32,7 +35,7 @@ namespace Toy.Robot.Operations
                 {
                     Place(operation);
                 }
-                if (_isToyPlaced) continue;
+                if (!_isToyPlaced) continue;
                 if(Regex.IsMatch(operation, $"^{MOVE}$"))
                 {
                     Move(operation);
@@ -52,16 +55,22 @@ namespace Toy.Robot.Operations
             }
         }
 
+        private void SplitOperationParameters(string operation)
+        {
+            var operationParameters = operation.Split(' ', ',');
+            if (operationParameters.Length != 4) return;
+            int.TryParse(operationParameters[1], out var x);
+            int.TryParse(operationParameters[2], out var y);
+            var direction = operationParameters[3];
+            Robot.Coordinate.X = x;
+            Robot.Coordinate.Y = y;
+            Robot.Direction = direction;
+        }
+
         public void Place(string operation)
         {
             _logger.LogDebug($"Place operation:{operation}");
-            var placeParameters = operation.Split(' ', ',');
-            if (placeParameters.Length != 4) return;
-            int.TryParse(placeParameters[1], out var x);
-            int.TryParse(placeParameters[2], out var y);
-            var direction = placeParameters[3];
-            Robot.Coordinate = new Position {X = x, Y = y};
-            Robot.Direction = direction;
+            SplitOperationParameters(operation);
             _robotCommands.ExecutePlaceCommand(Robot);
             _isToyPlaced = true;
         }
@@ -69,16 +78,26 @@ namespace Toy.Robot.Operations
         public void Move(string operation)
         {
             _logger.LogDebug($"Move operation:{operation}");
+            SplitOperationParameters(operation);
+            _robotCommands.ExecuteMoveCommand(Robot);
         }
 
         public void TurnLeft()
         {
             _logger.LogDebug($"Turning Left");
+            _robotCommands.ExecuteTurnLeftCommand(Robot);
         }
 
         public void TurnRight()
         {
             _logger.LogDebug($"Turning Right");
+            _robotCommands.ExecuteTurnRightCommand(Robot);
+        }
+
+        public void Report()
+        {
+            _logger.LogDebug($"Reporting operation");
+            _robotCommands.ExecuteReportCommand();
         }
     }
 }

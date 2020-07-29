@@ -11,5 +11,6 @@ namespace Toy.Robot.Common.Interfaces
         void Move(string command);
         void TurnLeft();
         void TurnRight();
+        void Report();
     }
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Toy.Robot.Common.Interfaces;
 using Toy.Robot.Operations;
 
@@ -13,6 +14,11 @@ namespace Toy.Robot.ConsoleApp
         public static void Main(string[] args)
         {
             var builder = new HostBuilder()
+                .ConfigureLogging(logging =>
+                {
+                    // logging.AddConsole();
+                    logging.AddDebug();
+                })
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddTransient<IToyOperations, ToyOperations>();

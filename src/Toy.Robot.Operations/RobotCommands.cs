@@ -14,23 +14,27 @@ namespace Toy.Robot.Operations
         }
         public void ExecutePlaceCommand(Common.Robot robot)
         {
-            _logger.LogDebug("");
             Console.WriteLine("Executing place command");
         }
 
         public void ExecuteMoveCommand(Common.Robot robot)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Executing move command");
         }
 
         public void ExecuteTurnLeftCommand(Common.Robot robot)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Executing left command");
         }
 
         public void ExecuteTurnRightCommand(Common.Robot robot)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Executing right command");
+        }
+
+        public void ExecuteReportCommand()
+        {
+            Console.WriteLine("Executing report command");
         }
     }
 }
