@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Toy.Robot.Common;
 using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
@@ -16,12 +17,14 @@ namespace Toy.Robot.Operations
         public Common.Robot Robot;
         public bool IsToyPlaced;
         private string _currentReport = string.Empty;
-        private TableTop _board = new TableTop();
+        // private TableTop _board = new TableTop();
+        private readonly ToyRobotSettings _settings;
 
-        public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands)
+        public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands, IOptions<ToyRobotSettings> settings)
         {
             _logger = logger;
             _robotCommands = robotCommands;
+            _settings = settings.Value;
             Robot = new Common.Robot
             {
                 Coordinate = new Position()
@@ -95,7 +98,7 @@ namespace Toy.Robot.Operations
             _logger.LogDebug($"Place operation:{operation}");
             var robotPosition = SplitOperationParameters(operation);
             Console.WriteLine("Executing place command");
-            if (!robotPosition.IsPlacementValid(new TableTop())) return;
+            if (!robotPosition.IsPlacementValid(_settings.Board)) return;
             Robot = robotPosition;
             IsToyPlaced = true;
         }
@@ -103,7 +106,7 @@ namespace Toy.Robot.Operations
         public void Move(string operation)
         {
             _logger.LogDebug($"Move operation:{operation}");
-            _robotCommands.ExecuteMoveCommand(Robot, _board);
+            _robotCommands.ExecuteMoveCommand(Robot, _settings.Board);
         }
 
         public void TurnLeft()

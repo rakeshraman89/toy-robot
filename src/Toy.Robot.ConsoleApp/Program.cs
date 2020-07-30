@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Toy.Robot.Common;
 using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
 using Toy.Robot.Operations;
@@ -14,19 +16,25 @@ namespace Toy.Robot.ConsoleApp
         private static IToyOperations _toyOperations;
         public static void Main(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional:false)
+                .Build();
             var builder = new HostBuilder()
                 .ConfigureLogging(logging =>
                 {
-                    // logging.AddConsole();
                     logging.AddDebug();
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddTransient<IToyOperations, ToyOperations>();
-                    services.AddTransient<IRobotCommands, RobotCommands>();
+                    services
+                        .AddTransient<IToyOperations, ToyOperations>()
+                        .AddTransient<IRobotCommands, RobotCommands>()
+                        .AddOptions()
+                        .Configure<ToyRobotSettings>(config.GetSection("ToyRobot"));
                 }).UseConsoleLifetime();
 
             var host = builder.Build();
+            
             using (var serviceScope = host.Services.CreateScope())
             {
                 var services = serviceScope.ServiceProvider;

@@ -97,7 +97,7 @@ namespace Toy.Robot.Operations
 
         public string ExecuteReportCommand(Common.Robot robot)
         {
-            var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()}";
+            var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()?.ToUpper()}";
             Console.WriteLine(report);
             return report;
         }
