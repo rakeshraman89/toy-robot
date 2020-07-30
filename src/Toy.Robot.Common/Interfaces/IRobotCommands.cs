@@ -6,10 +6,10 @@ namespace Toy.Robot.Common.Interfaces
 {
     public interface IRobotCommands
     {
-        void ExecutePlaceCommand(Robot robot);
-        void ExecuteMoveCommand(Robot robot);
+        // void ExecutePlaceCommand(Robot robot);
+        void ExecuteMoveCommand(Robot robot, TableTop board);
         void ExecuteTurnLeftCommand(Robot robot);
         void ExecuteTurnRightCommand(Robot robot);
-        void ExecuteReportCommand();
+        string ExecuteReportCommand(Robot robot);
     }
 }

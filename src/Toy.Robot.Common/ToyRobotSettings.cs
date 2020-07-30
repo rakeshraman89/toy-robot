@@ -12,7 +12,7 @@ namespace Toy.Robot.Common
 
     public class TableTop
     {
-        public int Length { get; set; } = 5;
-        public int Breadth { get; set; } = 5;
+        public int Length { get; set; }
+        public int Breadth { get; set; }
     }
 }
