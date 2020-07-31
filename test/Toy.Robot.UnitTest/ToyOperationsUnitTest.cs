@@ -73,22 +73,23 @@ namespace Toy.Robot.UnitTest
             Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Toy Robot execution is incorrect");
         }
 
-        [Test]
-        public void TestCommandsIgnoredBeforePlace()
+        [TestCase("0,0,SOUTH", new[] { "RIGHT", "MOVE", "PLACE 0,0,EAST", "RIGHT", "MOVE", "REPORT" }, TestName = "Commands before place omitted")]
+        public void TestCommandsIgnoredBeforePlace(string expectedReport, string[] commands)
         {
-            Assert.True(true);
+            var subject = new ToyOperations(_logger, new RobotCommands(Mock.Of<ILogger<RobotCommands>>()), _settings);
+            subject.ProcessOperations(commands);
+            Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Expected report is incorrect");
         }
         
-        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT","MOVE", "REPORT" }, TestName = "Robot moved past boundary")]
-        [TestCase("0,1,NORTH", new[] {"PLACE 0,0,EAST", "RIGHT", "RIGHT", "RIGHT", "MOVE", "REPORT" }, TestName = "Robot moved past boundary")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT","MOVE", "REPORT"}, TestName = "Robot moved south past boundary")]
+        [TestCase("0,1,NORTH", new[] {"PLACE 0,0,EAST", "RIGHT", "RIGHT", "RIGHT", "MOVE", "REPORT"}, TestName = "Robot moved north past boundary")]
+        [TestCase("0,0,SOUTH", new[] { "# this is a test data", "PLACE 0,0,EAST", "echo we are going to move", "RIGHT", "MOVE", "REPORT"}
+            ,TestName = "Robot command files with comments and echo")]
         public void TestRobotEdgeCaseOperation(string expectedReport, string[] commands)
         {
             var subject = new ToyOperations(_logger, new RobotCommands(Mock.Of<ILogger<RobotCommands>>()), _settings);
             subject.ProcessOperations(commands);
-            Assert.Multiple(() =>
-            {
-                Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Expected report is incorrect");
-            });
+            Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Expected report is incorrect");
         }
     }
 }

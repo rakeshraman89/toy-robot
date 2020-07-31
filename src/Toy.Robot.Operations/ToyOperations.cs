@@ -60,6 +60,11 @@ namespace Toy.Robot.Operations
                 {
                     Report();
                 }
+                else if (Regex.IsMatch(operation.ToLower(), "^echo\\s"))
+                {
+                    Console.WriteLine(operation.Substring(5));
+                }
+                else if (operation[0].Equals('#')) { }
                 else
                 {
                     throw new CommandException($"Error command:{operation}");
@@ -97,7 +102,6 @@ namespace Toy.Robot.Operations
         {
             _logger.LogDebug($"Place operation:{operation}");
             var robotPosition = SplitOperationParameters(operation);
-            Console.WriteLine("Executing place command");
             if (!robotPosition.IsPlacementValid(_settings.Board)) return;
             Robot = robotPosition;
             IsToyPlaced = true;
@@ -125,6 +129,7 @@ namespace Toy.Robot.Operations
         {
             _logger.LogDebug($"Reporting operation");
             _currentReport = _robotCommands.ExecuteReportCommand(Robot);
+            Console.WriteLine(_currentReport);
         }
 
         public string GetCurrentReport()

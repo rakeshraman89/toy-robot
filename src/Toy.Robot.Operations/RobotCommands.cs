@@ -16,7 +16,6 @@ namespace Toy.Robot.Operations
 
         public void ExecuteMoveCommand(Common.Robot robot, TableTop board)
         {
-            Console.WriteLine("Executing move command");
             var tempRobot = new Common.Robot()
             {
                 Coordinate = new Position
@@ -52,7 +51,6 @@ namespace Toy.Robot.Operations
 
         public void ExecuteTurnLeftCommand(Common.Robot robot)
         {
-            Console.WriteLine("Executing left command");
             switch (robot.Direction)
             {
                 case FacingDirection.East:
@@ -75,7 +73,6 @@ namespace Toy.Robot.Operations
 
         public void ExecuteTurnRightCommand(Common.Robot robot)
         {
-            Console.WriteLine("Executing right command");
             switch (robot.Direction)
             {
                 case FacingDirection.North:
@@ -98,7 +95,7 @@ namespace Toy.Robot.Operations
         public string ExecuteReportCommand(Common.Robot robot)
         {
             var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()?.ToUpper()}";
-            Console.WriteLine(report);
+            // Console.WriteLine(report);
             return report;
         }
     }
