@@ -41,13 +41,13 @@ namespace Toy.Robot.ConsoleApp
                 _toyOperations = services.GetService<IToyOperations>();
             }
             Console.WriteLine("**************");
-            Console.WriteLine("\nHi this is Chitti-The robot!");
-            Console.WriteLine("\nEnter the file name:");
+            Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
+            Console.Write("\nEnter the file name:");
             var fileName = Console.ReadLine();
             var operations = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
             if (operations == null || operations.Length == 0)
             {
-                Console.WriteLine("File Name was not specified");
+                Console.WriteLine("File does not exist");
             }
             ReadOperations(operations);
             Console.ReadLine();

@@ -1,4 +1,6 @@
+# this is a test data
 PLACE 1,2,EAST
+echo we are going to move
 MOVE
 MOVE
 LEFT
