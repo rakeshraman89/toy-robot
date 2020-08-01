@@ -41,17 +41,24 @@ namespace Toy.Robot.ConsoleApp
                 var services = serviceScope.ServiceProvider;
                 _toyOperations = services.GetService<IToyOperations>();
             }
-            Console.WriteLine("**************");
-            Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
-            Console.Write("\nEnter the file name:");
-            var fileName = Console.ReadLine();
-            var operations = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
-            if (operations == null || operations.Length == 0)
+
+            var exit = false;
+            do
             {
-                Console.WriteLine("File does not exist");
-            }
-            ReadOperations(operations);
-            Console.ReadLine();
+                Console.WriteLine("\n************************");
+                Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
+                Console.Write("\nEnter the file name:");
+                var fileName = Console.ReadLine();
+                var operations = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
+                if (operations == null || operations.Length == 0)
+                {
+                    Console.WriteLine("File does not exist");
+                }
+                ReadOperations(operations);
+                Console.Write("\nWould you like to continue (Y/N)?");
+                var isYesOrNo = Console.ReadLine();
+                if (isYesOrNo == "N" || isYesOrNo == "n") exit = true;
+            } while (!exit);
         }
 
         private static void ReadOperations(string[] operations)

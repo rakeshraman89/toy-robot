@@ -45,11 +45,14 @@ namespace Toy.Robot.UnitTest
             Assert.That(subject.IsToyPlaced, Is.EqualTo(isToyPlaced), "Toy is not placed");
         }
 
-        [TestCase(false, new[] {"PLACE1,2,EAST", "MOVE"}, TestName = "Test with incorrect place command")]
-        public void TestFailureToyPlaceOperations(bool isToyPlaced, string[] commands)
+        [TestCase(new[] {"PLACE1,2,EAST", "MOVE"}, "PLACE1,2,EAST", TestName = "Incorrect PLACE command format")]
+        [TestCase(new[] {"PLACE 1,2,EAST", "MOVE1"}, "MOVE1", TestName = "Incorrect MOVE command format")]
+        [TestCase(new[] {"PLACE 1,2,EAST", "MOVE", "PLACE 2, 2, NORTH"}, "PLACE 2, 2, NORTH", TestName = "Incorrect PLACE command format after move")]
+        public void TestFailureToyPlaceOperations(string[] commands, string expectedMessage)
         {
             var subject = new ToyOperations(_logger, _robotCommands, _settings);
-            Assert.Throws<CommandException>(() => subject.ProcessOperations(commands));
+            Assert.That(() => subject.ProcessOperations(commands)
+                ,Throws.TypeOf<CommandException>().With.Message.EqualTo($"Error command:{expectedMessage}"), "Exception message does not match");
         }
 
         [TestCase("2,2,EAST", new[] {"PLACE 1,2,EAST", "MOVE", "REPORT"}, TestName = "Report with one move")]
@@ -70,7 +73,7 @@ namespace Toy.Robot.UnitTest
             Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Toy Robot execution is incorrect");
         }
 
-        [TestCase("0,0,SOUTH", new[] { "RIGHT", "MOVE", "PLACE 0,0,EAST", "RIGHT", "MOVE", "REPORT" }, TestName = "Commands before place omitted")]
+        [TestCase("0,0,SOUTH", new[] { "RIGHT", "MOVE", "PLACE 0,0,EAST", "RIGHT", "MOVE", "REPORT" }, TestName = "Commands before PLACE command are omitted")]
         public void TestCommandsIgnoredBeforePlace(string expectedReport, string[] commands)
         {
             var subject = new ToyOperations(_logger, new RobotCommands(Mock.Of<ILogger<RobotCommands>>()), _settings);
@@ -79,6 +82,7 @@ namespace Toy.Robot.UnitTest
         }
         
         [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT","MOVE", "REPORT"}, TestName = "Robot moved south past boundary")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,WEST", "MOVE","LEFT","MOVE", "REPORT"}, TestName = "Robot moved west past boundary")]
         [TestCase("0,1,NORTH", new[] {"PLACE 0,0,EAST", "RIGHT", "RIGHT", "RIGHT", "MOVE", "REPORT"}, TestName = "Robot moved north past boundary")]
         [TestCase("0,0,SOUTH", new[] { "# this is a test data", "PLACE 0,0,EAST", "echo we are going to move", "RIGHT", "MOVE", "REPORT"}
             ,TestName = "Robot command files with comments and echo")]

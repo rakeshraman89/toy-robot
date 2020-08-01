@@ -38,6 +38,7 @@ namespace Toy.Robot.Operations
                 throw new CommandException("Error: Board size is not specified");
 
             _logger.LogDebug("Performing robot operations!!");
+            //place[\\s][\\d]+[\\s]*,[\\s]*[\\d]+[\\s]*,[\\s]*(north|east|west|south) - regex to allow spaces before and after commas in PLACE command
             foreach (var operation in commands)
             {
                 if (Regex.IsMatch(operation.ToLower(), $"^{Commands.PLACE.ToString().ToLower()}"))
