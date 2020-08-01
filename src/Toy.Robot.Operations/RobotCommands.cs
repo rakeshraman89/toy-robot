@@ -18,7 +18,7 @@ namespace Toy.Robot.Operations
         {
             var tempRobot = new Common.Robot()
             {
-                Coordinate = new Position
+                Coordinate = new Position<int>
                 {
                     X = robot.Coordinate.X,
                     Y = robot.Coordinate.Y
@@ -95,7 +95,6 @@ namespace Toy.Robot.Operations
         public string ExecuteReportCommand(Common.Robot robot)
         {
             var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()?.ToUpper()}";
-            // Console.WriteLine(report);
             return report;
         }
     }

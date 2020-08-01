@@ -1,4 +1,3 @@
-using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -7,13 +6,11 @@ using NUnit.Framework.Internal;
 using Toy.Robot.Common;
 using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
-using Toy.Robot.Common.Utils;
 using Toy.Robot.Operations;
-using ILogger = NUnit.Framework.Internal.ILogger;
 
 namespace Toy.Robot.UnitTest
 {
-    [TestFixture(Category = "Unit Test")]
+    [TestFixture(Category = "Functional Test")]
     public class ToyOperationsUnitTest
     {
         private ILogger<ToyOperations> _logger;

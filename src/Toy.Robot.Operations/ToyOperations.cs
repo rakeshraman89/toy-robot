@@ -17,21 +17,26 @@ namespace Toy.Robot.Operations
         public Common.Robot Robot;
         public bool IsToyPlaced;
         private string _currentReport = string.Empty;
-        // private TableTop _board = new TableTop();
         private readonly ToyRobotSettings _settings;
+        private readonly TableTop _board;
 
         public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands, IOptions<ToyRobotSettings> settings)
         {
             _logger = logger;
             _robotCommands = robotCommands;
             _settings = settings.Value;
+            _board = _settings.Board;
             Robot = new Common.Robot
             {
-                Coordinate = new Position()
+                Coordinate = new Position<int>()
             };
         }
         public void ProcessOperations(string[] commands)
         {
+            // if both length and breadth of table top is zero, then logically there does not exist a table top
+            if(_board == null || (_board.Length == 0 && _board.Breadth == 0)) 
+                throw new CommandException("Error: Board size is not specified");
+
             _logger.LogDebug("Performing robot operations!!");
             foreach (var operation in commands)
             {
@@ -88,7 +93,7 @@ namespace Toy.Robot.Operations
             var direction = operationParameters[3];
             var tempRobotPosition = new Common.Robot
             {
-                Coordinate = new Position
+                Coordinate = new Position<int>
                 {
                     X = x,
                     Y = y
@@ -102,7 +107,7 @@ namespace Toy.Robot.Operations
         {
             _logger.LogDebug($"Place operation:{operation}");
             var robotPosition = SplitOperationParameters(operation);
-            if (!robotPosition.IsPlacementValid(_settings.Board)) return;
+            if (!robotPosition.IsPlacementValid(_board)) return;
             Robot = robotPosition;
             IsToyPlaced = true;
         }
@@ -110,24 +115,24 @@ namespace Toy.Robot.Operations
         public void Move(string operation)
         {
             _logger.LogDebug($"Move operation:{operation}");
-            _robotCommands.ExecuteMoveCommand(Robot, _settings.Board);
+            _robotCommands.ExecuteMoveCommand(Robot, _board);
         }
 
         public void TurnLeft()
         {
-            _logger.LogDebug($"Turning Left");
+            _logger.LogDebug("Turning Left");
             _robotCommands.ExecuteTurnLeftCommand(Robot);
         }
 
         public void TurnRight()
         {
-            _logger.LogDebug($"Turning Right");
+            _logger.LogDebug("Turning Right");
             _robotCommands.ExecuteTurnRightCommand(Robot);
         }
 
         public void Report()
         {
-            _logger.LogDebug($"Reporting operation");
+            _logger.LogDebug("Reporting operation");
             _currentReport = _robotCommands.ExecuteReportCommand(Robot);
             Console.WriteLine(_currentReport);
         }

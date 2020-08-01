@@ -5,13 +5,13 @@ namespace Toy.Robot.Common
 {
     public class Robot
     {
-        public Position Coordinate { get; set; }
+        public Position<int> Coordinate { get; set; }
         public FacingDirection Direction { get; set; }
     }
 
-    public class Position
+    public class Position<T>
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        public T X { get; set; }
+        public T Y { get; set; }
     }
 }
