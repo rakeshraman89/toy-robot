@@ -29,8 +29,7 @@ namespace Toy.Robot.UnitTest
                     {
                         Length = 5,
                         Breadth = 5
-                    },
-                    FilePath = ""
+                    }
                 });
         }
 
@@ -82,6 +81,14 @@ namespace Toy.Robot.UnitTest
         }
         
         [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT","MOVE", "REPORT"}, TestName = "Robot moved south past boundary")]
+        [TestCase("5,5,EAST", new[] {"PLACE 6,10,EAST", "RIGHT", "PLACE 4,5,EAST","MOVE", "REPORT"}, TestName = "Placed past the boundary")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "", "MOVE", "REPORT"}, TestName = "Command with an empty line")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "   ", "MOVE", "REPORT"}, TestName = "Command with blank spaces")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "MOVE", " ", "REPORT"}, TestName = "Command having a line with only space")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "MOVE", "#", "REPORT"}, TestName = "Command having hash(#)")]
+        [TestCase("0,0,SOUTH", new[] {"###", "PLACE 0,0,EAST", "RIGHT", "MOVE", "####", "REPORT"}, TestName = "Command having multiple hashes(#)")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "echo test", "MOVE", "REPORT"}, TestName = "Command having echo command")]
+        [TestCase("0,0,SOUTH", new[] {"echo test", "PLACE 0,0,EAST", "RIGHT", "echo test", "MOVE", "REPORT"}, TestName = "Command having multiple echo command")]
         [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,WEST", "MOVE","LEFT","MOVE", "REPORT"}, TestName = "Robot moved west past boundary")]
         [TestCase("0,1,NORTH", new[] {"PLACE 0,0,EAST", "RIGHT", "RIGHT", "RIGHT", "MOVE", "REPORT"}, TestName = "Robot moved north past boundary")]
         [TestCase("0,0,SOUTH", new[] { "# this is a test data", "PLACE 0,0,EAST", "echo we are going to move", "RIGHT", "MOVE", "REPORT"}

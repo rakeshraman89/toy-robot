@@ -70,7 +70,7 @@ namespace Toy.Robot.Operations
                 {
                     Console.WriteLine(operation.Substring(5));
                 }
-                else if (operation[0].Equals('#')) { }
+                else if (string.IsNullOrEmpty(operation) || string.IsNullOrWhiteSpace(operation) || operation[0] == '#') { }
                 else
                 {
                     throw new CommandException($"Error command:{operation}");

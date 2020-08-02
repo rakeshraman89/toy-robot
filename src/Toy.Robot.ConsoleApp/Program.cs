@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,30 +36,69 @@ namespace Toy.Robot.ConsoleApp
                 }).UseConsoleLifetime();
 
             var host = builder.Build();
-            
+            ToyRobotSettings settings;
             using (var serviceScope = host.Services.CreateScope())
             {
                 var services = serviceScope.ServiceProvider;
                 _toyOperations = services.GetService<IToyOperations>();
+                var robotSettings = services.GetService<IOptions<ToyRobotSettings>>();
+                settings = robotSettings?.Value;
             }
 
             var exit = false;
+
+            Console.WriteLine("\n************************");
+            Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
+            Console.WriteLine($"\nBoard size is {settings?.Board.Length}, {settings?.Board.Breadth} \n");
+
+            if (settings != null && settings.TestFiles.Any())
+            {
+                foreach (var file in settings.TestFiles)
+                {
+                    ReadFile(file);
+                }
+            }
+
             do
             {
-                Console.WriteLine("\n************************");
-                Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
-                Console.Write("\nEnter the file name:");
-                var fileName = Console.ReadLine();
-                var operations = File.ReadAllLines($"C:\\Dev\\Source\\Sample\\toy-robot-puzzle\\TestData\\RobotCommands.txt");
-                if (operations == null || operations.Length == 0)
+                try
                 {
-                    Console.WriteLine("File does not exist");
+                    Console.Write("\nEnter the file name (or enter q or quit to exit):");
+                    var fileName = Console.ReadLine();
+                    if (fileName != null && (fileName.Equals("q", StringComparison.OrdinalIgnoreCase)
+                        || fileName.Equals("quit", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        exit = true;
+                        continue;
+                    }
+                    ReadFile(fileName);
                 }
-                ReadOperations(operations);
+                catch (FileNotFoundException fileException)
+                {
+                    Console.WriteLine($"Error finding the file - {fileException.FileName}");
+                }
+                catch (ArgumentException argumentException)
+                {
+                    Console.WriteLine($"Error finding the file - {argumentException.Message}");
+                }
+                catch (NotSupportedFileException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
                 Console.Write("\nWould you like to continue (Y/N)?");
                 var isYesOrNo = Console.ReadLine();
                 if (isYesOrNo == "N" || isYesOrNo == "n") exit = true;
             } while (!exit);
+        }
+
+        private static void ReadFile(string fileName)
+        {
+            var operations = File.ReadAllLines($"{fileName}");
+            if (operations == null || operations.Length == 0)
+            {
+                Console.WriteLine("There are no commands to execute");
+            }
+            ReadOperations(operations);
         }
 
         private static void ReadOperations(string[] operations)
