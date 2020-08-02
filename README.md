@@ -57,3 +57,8 @@ The folowing steps can be carried out from the directory where it was cloned pre
 > cd toy-robot-puzzle\test\Toy.Robot.UnitTest
 > dotnet test Toy.Robot.UnitTest.csproj
 ```
+#### Customizing the board size
+The size of the board can be modified by changing the values of length and breadth of Board settings in the appsettings.json file located at,
+```
+$(Root directory)\src\Toy.Robot.ConsoleApp
+```
