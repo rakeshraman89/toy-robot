@@ -19,6 +19,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="..\..\TestData\Test-Commands.txt" CopyToOutputDirectory="Always" />
-    <None Include="..\..\TestData\Test-Commands - 1.txt" CopyToOutputDirectory="Always" />  
   </ItemGroup>
 </Project>

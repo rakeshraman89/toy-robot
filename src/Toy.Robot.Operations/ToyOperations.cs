@@ -31,6 +31,11 @@ namespace Toy.Robot.Operations
                 Coordinate = new Position<int>()
             };
         }
+
+        /// <summary>
+        /// Method to read the command lines and invoke commands
+        /// </summary>
+        /// <param name="commands"></param>
         public void ProcessOperations(string[] commands)
         {
             // if both length and breadth of table top is zero, then logically there does not exist a table top
@@ -66,9 +71,9 @@ namespace Toy.Robot.Operations
                 {
                     Report();
                 }
-                else if (Regex.IsMatch(operation.ToLower(), "^echo\\s"))
+                else if (Regex.IsMatch(operation.ToLower(), "^echo"))
                 {
-                    Console.WriteLine(operation.Substring(5));
+                    Console.WriteLine(operation.Substring(4));
                 }
                 else if (string.IsNullOrEmpty(operation) || string.IsNullOrWhiteSpace(operation) || operation[0] == '#') { }
                 else
@@ -78,6 +83,11 @@ namespace Toy.Robot.Operations
             }
         }
 
+        /// <summary>
+        /// Method to split place operation and assign values to Robot model
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <returns></returns>
         private Common.Robot SplitOperationParameters(string operation)
         {
             var operationParameters = operation.Split(' ', ',');

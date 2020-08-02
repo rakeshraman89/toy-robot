@@ -51,6 +51,7 @@ namespace Toy.Robot.ConsoleApp
             Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
             Console.WriteLine($"\nBoard size is {settings?.Board.Length}, {settings?.Board.Breadth} \n");
 
+            // execute the files with test data
             if (settings != null && settings.TestFiles.Any())
             {
                 foreach (var file in settings.TestFiles)

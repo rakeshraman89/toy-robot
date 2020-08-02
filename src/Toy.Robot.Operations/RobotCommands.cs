@@ -14,6 +14,11 @@ namespace Toy.Robot.Operations
             _logger = logger;
         }
 
+        /// <summary>
+        /// Method to execute move command
+        /// </summary>
+        /// <param name="robot"></param>
+        /// <param name="board"></param>
         public void ExecuteMoveCommand(Common.Robot robot, TableTop board)
         {
             var tempRobot = new Common.Robot()
@@ -49,6 +54,10 @@ namespace Toy.Robot.Operations
             robot.Direction = tempRobot.Direction;
         }
 
+        /// <summary>
+        /// Method to turn the robot left by 90 degrees
+        /// </summary>
+        /// <param name="robot"></param>
         public void ExecuteTurnLeftCommand(Common.Robot robot)
         {
             switch (robot.Direction)
@@ -71,6 +80,10 @@ namespace Toy.Robot.Operations
 
         }
 
+        /// <summary>
+        /// Method to turn the robot right by 90 degrees
+        /// </summary>
+        /// <param name="robot"></param>
         public void ExecuteTurnRightCommand(Common.Robot robot)
         {
             switch (robot.Direction)
@@ -92,6 +105,11 @@ namespace Toy.Robot.Operations
             }
         }
 
+        /// <summary>
+        /// Method to print the position and direction the robot is facing
+        /// </summary>
+        /// <param name="robot"></param>
+        /// <returns></returns>
         public string ExecuteReportCommand(Common.Robot robot)
         {
             var report = $"{robot.Coordinate.X},{robot.Coordinate.Y},{robot.Direction.ToString()?.ToUpper()}";
