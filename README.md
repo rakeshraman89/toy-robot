@@ -52,6 +52,6 @@ The folowing steps can be carried out from the directory where it was cloned pre
 
 ```shell
 # Running unit tests
-> cd pwd-strength\test\Password.Strength.UnitTest
-> dotnet test Password.Strength.UnitTests.csproj
+> cd toy-robot-puzzle\test\Toy.Robot.UnitTest
+> dotnet test Toy.Robot.UnitTest.csproj
 ```
