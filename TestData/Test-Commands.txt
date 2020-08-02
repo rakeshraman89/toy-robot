@@ -1,0 +1,62 @@
+echo Test 1 - Basic robot commands
+PLACE 1,2,EAST
+MOVE
+MOVE
+LEFT
+MOVE
+REPORT
+echo Expected:3,3,NORTH
+#####################
+echo
+####################
+echo Test 2 - Report with one move
+PLACE 1,2,EAST
+MOVE
+REPORT
+echo Expected:2,2,EAST
+#######################
+echo
+######################
+echo Test 3 - Commands before PLACE are omitted
+RIGHT
+MOVE
+PLACE 0,0,EAST
+RIGHT
+MOVE
+REPORT
+echo Expected:0,0,SOUTH
+#######################
+echo
+#####################
+echo Test 4 - Robot moved south past boundary
+PLACE 0,0,EAST
+RIGHT
+MOVE
+REPORT
+echo Expected:0,0,SOUTH
+######################
+echo
+######################
+echo Test 5 - Command with blank spaces
+PLACE 0,0,EAST
+RIGHT
+   
+MOVE
+REPORT
+echo Expected:0,0,SOUTH
+#####################
+echo
+#####################
+echo Test 6 - Multiple PLACE commands
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+PLACE 1,1,WEST
+REPORT
+echo Expected:1,1,WEST

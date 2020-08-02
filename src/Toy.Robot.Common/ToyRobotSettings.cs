@@ -6,7 +6,7 @@ namespace Toy.Robot.Common
 {
     public class ToyRobotSettings
     {
-        public string FilePath { get; set; }
+        public string[] TestFiles { get; set; }
         public TableTop Board { get; set; }
     }
 

@@ -17,22 +17,33 @@ namespace Toy.Robot.Operations
         public Common.Robot Robot;
         public bool IsToyPlaced;
         private string _currentReport = string.Empty;
-        // private TableTop _board = new TableTop();
         private readonly ToyRobotSettings _settings;
+        private readonly TableTop _board;
 
         public ToyOperations(ILogger<ToyOperations> logger, IRobotCommands robotCommands, IOptions<ToyRobotSettings> settings)
         {
             _logger = logger;
             _robotCommands = robotCommands;
             _settings = settings.Value;
+            _board = _settings.Board;
             Robot = new Common.Robot
             {
-                Coordinate = new Position()
+                Coordinate = new Position<int>()
             };
         }
+
+        /// <summary>
+        /// Method to read the command lines and invoke commands
+        /// </summary>
+        /// <param name="commands"></param>
         public void ProcessOperations(string[] commands)
         {
+            // if both length and breadth of table top is zero, then logically there does not exist a table top
+            if(_board == null || (_board.Length == 0 && _board.Breadth == 0)) 
+                throw new CommandException("Error: Board size is not specified");
+
             _logger.LogDebug("Performing robot operations!!");
+            //place[\\s][\\d]+[\\s]*,[\\s]*[\\d]+[\\s]*,[\\s]*(north|east|west|south) - regex to allow spaces before and after commas in PLACE command
             foreach (var operation in commands)
             {
                 if (Regex.IsMatch(operation.ToLower(), $"^{Commands.PLACE.ToString().ToLower()}"))
@@ -60,11 +71,11 @@ namespace Toy.Robot.Operations
                 {
                     Report();
                 }
-                else if (Regex.IsMatch(operation.ToLower(), "^echo\\s"))
+                else if (Regex.IsMatch(operation.ToLower(), "^echo"))
                 {
-                    Console.WriteLine(operation.Substring(5));
+                    Console.WriteLine(operation.Substring(4));
                 }
-                else if (operation[0].Equals('#')) { }
+                else if (string.IsNullOrEmpty(operation) || string.IsNullOrWhiteSpace(operation) || operation[0] == '#') { }
                 else
                 {
                     throw new CommandException($"Error command:{operation}");
@@ -72,6 +83,11 @@ namespace Toy.Robot.Operations
             }
         }
 
+        /// <summary>
+        /// Method to split place operation and assign values to Robot model
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <returns></returns>
         private Common.Robot SplitOperationParameters(string operation)
         {
             var operationParameters = operation.Split(' ', ',');
@@ -88,7 +104,7 @@ namespace Toy.Robot.Operations
             var direction = operationParameters[3];
             var tempRobotPosition = new Common.Robot
             {
-                Coordinate = new Position
+                Coordinate = new Position<int>
                 {
                     X = x,
                     Y = y
@@ -102,7 +118,7 @@ namespace Toy.Robot.Operations
         {
             _logger.LogDebug($"Place operation:{operation}");
             var robotPosition = SplitOperationParameters(operation);
-            if (!robotPosition.IsPlacementValid(_settings.Board)) return;
+            if (!robotPosition.IsPlacementValid(_board)) return;
             Robot = robotPosition;
             IsToyPlaced = true;
         }
@@ -110,24 +126,24 @@ namespace Toy.Robot.Operations
         public void Move(string operation)
         {
             _logger.LogDebug($"Move operation:{operation}");
-            _robotCommands.ExecuteMoveCommand(Robot, _settings.Board);
+            _robotCommands.ExecuteMoveCommand(Robot, _board);
         }
 
         public void TurnLeft()
         {
-            _logger.LogDebug($"Turning Left");
+            _logger.LogDebug("Turning Left");
             _robotCommands.ExecuteTurnLeftCommand(Robot);
         }
 
         public void TurnRight()
         {
-            _logger.LogDebug($"Turning Right");
+            _logger.LogDebug("Turning Right");
             _robotCommands.ExecuteTurnRightCommand(Robot);
         }
 
         public void Report()
         {
-            _logger.LogDebug($"Reporting operation");
+            _logger.LogDebug("Reporting operation");
             _currentReport = _robotCommands.ExecuteReportCommand(Robot);
             Console.WriteLine(_currentReport);
         }

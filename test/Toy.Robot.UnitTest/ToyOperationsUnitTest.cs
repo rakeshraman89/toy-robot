@@ -1,4 +1,3 @@
-using System.IO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -7,13 +6,11 @@ using NUnit.Framework.Internal;
 using Toy.Robot.Common;
 using Toy.Robot.Common.Exceptions;
 using Toy.Robot.Common.Interfaces;
-using Toy.Robot.Common.Utils;
 using Toy.Robot.Operations;
-using ILogger = NUnit.Framework.Internal.ILogger;
 
 namespace Toy.Robot.UnitTest
 {
-    [TestFixture(Category = "Unit Test")]
+    [TestFixture(Category = "Functional Test")]
     public class ToyOperationsUnitTest
     {
         private ILogger<ToyOperations> _logger;
@@ -32,8 +29,7 @@ namespace Toy.Robot.UnitTest
                     {
                         Length = 5,
                         Breadth = 5
-                    },
-                    FilePath = ""
+                    }
                 });
         }
 
@@ -48,11 +44,14 @@ namespace Toy.Robot.UnitTest
             Assert.That(subject.IsToyPlaced, Is.EqualTo(isToyPlaced), "Toy is not placed");
         }
 
-        [TestCase(false, new[] {"PLACE1,2,EAST", "MOVE"}, TestName = "Test with incorrect place command")]
-        public void TestFailureToyPlaceOperations(bool isToyPlaced, string[] commands)
+        [TestCase(new[] {"PLACE1,2,EAST", "MOVE"}, "PLACE1,2,EAST", TestName = "Incorrect PLACE command format")]
+        [TestCase(new[] {"PLACE 1,2,EAST", "MOVE1"}, "MOVE1", TestName = "Incorrect MOVE command format")]
+        [TestCase(new[] {"PLACE 1,2,EAST", "MOVE", "PLACE 2, 2, NORTH"}, "PLACE 2, 2, NORTH", TestName = "Incorrect PLACE command format after move")]
+        public void TestFailureToyPlaceOperations(string[] commands, string expectedMessage)
         {
             var subject = new ToyOperations(_logger, _robotCommands, _settings);
-            Assert.Throws<CommandException>(() => subject.ProcessOperations(commands));
+            Assert.That(() => subject.ProcessOperations(commands)
+                ,Throws.TypeOf<CommandException>().With.Message.EqualTo($"Error command:{expectedMessage}"), "Exception message does not match");
         }
 
         [TestCase("2,2,EAST", new[] {"PLACE 1,2,EAST", "MOVE", "REPORT"}, TestName = "Report with one move")]
@@ -73,7 +72,7 @@ namespace Toy.Robot.UnitTest
             Assert.That(subject.GetCurrentReport(), Is.EqualTo(expectedReport), "Toy Robot execution is incorrect");
         }
 
-        [TestCase("0,0,SOUTH", new[] { "RIGHT", "MOVE", "PLACE 0,0,EAST", "RIGHT", "MOVE", "REPORT" }, TestName = "Commands before place omitted")]
+        [TestCase("0,0,SOUTH", new[] { "RIGHT", "MOVE", "PLACE 0,0,EAST", "RIGHT", "MOVE", "REPORT" }, TestName = "Commands before PLACE command are omitted")]
         public void TestCommandsIgnoredBeforePlace(string expectedReport, string[] commands)
         {
             var subject = new ToyOperations(_logger, new RobotCommands(Mock.Of<ILogger<RobotCommands>>()), _settings);
@@ -82,6 +81,15 @@ namespace Toy.Robot.UnitTest
         }
         
         [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT","MOVE", "REPORT"}, TestName = "Robot moved south past boundary")]
+        [TestCase("5,5,EAST", new[] {"PLACE 6,10,EAST", "RIGHT", "PLACE 4,5,EAST","MOVE", "REPORT"}, TestName = "Placed past the boundary")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "", "MOVE", "REPORT"}, TestName = "Command with an empty line")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "   ", "MOVE", "REPORT"}, TestName = "Command with blank spaces")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "MOVE", " ", "REPORT"}, TestName = "Command having a line with only space")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "MOVE", "#", "REPORT"}, TestName = "Command having hash(#)")]
+        [TestCase("0,0,SOUTH", new[] {"###", "PLACE 0,0,EAST", "RIGHT", "MOVE", "####", "REPORT"}, TestName = "Command having multiple hashes(#)")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,EAST", "RIGHT", "echo test", "MOVE", "REPORT"}, TestName = "Command having echo command")]
+        [TestCase("0,0,SOUTH", new[] {"echo test", "PLACE 0,0,EAST", "RIGHT", "echo test", "MOVE", "REPORT"}, TestName = "Command having multiple echo command")]
+        [TestCase("0,0,SOUTH", new[] {"PLACE 0,0,WEST", "MOVE","LEFT","MOVE", "REPORT"}, TestName = "Robot moved west past boundary")]
         [TestCase("0,1,NORTH", new[] {"PLACE 0,0,EAST", "RIGHT", "RIGHT", "RIGHT", "MOVE", "REPORT"}, TestName = "Robot moved north past boundary")]
         [TestCase("0,0,SOUTH", new[] { "# this is a test data", "PLACE 0,0,EAST", "echo we are going to move", "RIGHT", "MOVE", "REPORT"}
             ,TestName = "Robot command files with comments and echo")]
