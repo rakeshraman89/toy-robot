@@ -60,3 +60,10 @@ PLACE 1,1,WEST
 PLACE 1,1,WEST
 REPORT
 echo Expected:1,1,WEST
+echo
+echo Test 7 - lower case commands
+place 1,1,south
+left
+move
+report
+echo Expected:2,1,EAST

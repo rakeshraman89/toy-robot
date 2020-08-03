@@ -49,6 +49,8 @@ namespace Toy.Robot.ConsoleApp
 
             Console.WriteLine("\n************************");
             Console.WriteLine("\nWelcome to the Toy Robot puzzle!");
+            Console.WriteLine("\n************************");
+            Console.WriteLine("\nThe commands are case insensitive");
             Console.WriteLine($"\nBoard size is {settings?.Board.Length}, {settings?.Board.Breadth} \n");
 
             // execute the files with test data
@@ -64,6 +66,8 @@ namespace Toy.Robot.ConsoleApp
             {
                 try
                 {
+                    Console.WriteLine("\n**********************");
+                    Console.WriteLine("\nApplication accepts only .txt files.");
                     Console.Write("\nEnter the file name (or enter q or quit to exit):");
                     var fileName = Console.ReadLine();
                     if (fileName != null && (fileName.Equals("q", StringComparison.OrdinalIgnoreCase)
