@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Toy.Robot.ConsoleApp", "src\Toy.Robot.ConsoleApp\Toy.Robot.ConsoleApp.csproj", "{2CD11127-2D03-4523-A24E-95EEE42FD73D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Toy.Robot.UnitTest", "test\Toy.Robot.UnitTest\Toy.Robot.UnitTest.csproj", "{54820BDA-5C82-4C35-A28F-F241614C770A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toy.Robot.Common", "src\Toy.Robot.Common\Toy.Robot.Common.csproj", "{C9241270-37DB-4CDE-84AB-373760403FF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Toy.Robot.Operations", "src\Toy.Robot.Operations\Toy.Robot.Operations.csproj", "{60C0830C-8C5D-4CE4-8A1C-2BFBAEB26B17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{2CD11127-2D03-4523-A24E-95EEE42FD73D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CD11127-2D03-4523-A24E-95EEE42FD73D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2CD11127-2D03-4523-A24E-95EEE42FD73D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54820BDA-5C82-4C35-A28F-F241614C770A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54820BDA-5C82-4C35-A28F-F241614C770A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54820BDA-5C82-4C35-A28F-F241614C770A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54820BDA-5C82-4C35-A28F-F241614C770A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9241270-37DB-4CDE-84AB-373760403FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9241270-37DB-4CDE-84AB-373760403FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9241270-37DB-4CDE-84AB-373760403FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9241270-37DB-4CDE-84AB-373760403FF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60C0830C-8C5D-4CE4-8A1C-2BFBAEB26B17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60C0830C-8C5D-4CE4-8A1C-2BFBAEB26B17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60C0830C-8C5D-4CE4-8A1C-2BFBAEB26B17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60C0830C-8C5D-4CE4-8A1C-2BFBAEB26B17}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
