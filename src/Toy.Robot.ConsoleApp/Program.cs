@@ -98,6 +98,12 @@ namespace Toy.Robot.ConsoleApp
 
         private static void ReadFile(string fileName)
         {
+            var ext = Path.GetExtension(fileName);
+            if (string.IsNullOrEmpty(ext) || string.IsNullOrWhiteSpace(ext) || ext != ".txt")
+            {
+                Console.WriteLine("Input file must be of type .txt");
+                return;
+            }
             var operations = File.ReadAllLines($"{fileName}");
             if (operations == null || operations.Length == 0)
             {
