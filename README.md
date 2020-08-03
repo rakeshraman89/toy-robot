@@ -42,7 +42,7 @@ A robot that is not on the table will ignore the MOVE, LEFT, RIGHT and REPORT co
 > dotnet Toy.Robot.ConsoleApp.dll
 ```
 #### Input file
-The application only accepts .txt files.
+***The application only accepts .txt files.***
 There is a test data file located at `$(Root directory)\TestData`. This file will be executed when the application starts. You can add more files with commands to automatically execute when starting application.
 **The name of the newly added text file should be added to the `TestFiles` property in `appsettings.json` file located at `$(Root directory)\src\Toy.Robot.ConsoleApp`**.
 Name of text files containing the robot simulation commands can also be entered as console input once the application is started.
